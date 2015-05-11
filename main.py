@@ -1,8 +1,7 @@
 # piano wire simulation
 
 import numpy as np
-import string
+import vibration as vib
 
 
 # define variables
-
