@@ -4,7 +4,7 @@ class String:
   
   def __init__(self,note='C2',*args):
     
-    self.delta_t = 0.1
+    self.delta_t = 1/(16e3)
     
     # Choose constrains
     if str.lower(note) == 'c2':
@@ -71,7 +71,7 @@ class String:
         g[i] = 1.0/(endwindow-beginwindow)
 
 
-    for t in range(0,60):
+    for t in range(0,2001):
         # F = K/hammer_mass * np.abs(hammer_displacement - self.y)**p        
         for i in range(2,self.N-2):
           self.y_plus_n[i] = self.a_1*self.y[i] + self.a_2*self.y_minus_n[i] + self.a_3*(self.y[i+1]+self.y[i-1]) \
@@ -80,7 +80,7 @@ class String:
         # hammer_displacement = 2*hammer_displacement - hammer_displacement_minus_n + F*delta_t**2
         if t == 1:
             print(t)
-            F = 0.001
+            F = 0.01
 
         if t == 2:
             F = 0
@@ -93,4 +93,5 @@ class String:
         # plotting. Only used for testing
         x = np.linspace(0,self.L,self.N)
         plt.plot(x,self.y)
+        plt.axis([0,self.L,-0.01,0.01])
         plt.show()
