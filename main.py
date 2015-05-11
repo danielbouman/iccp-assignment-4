@@ -2,7 +2,7 @@
 from vibration import String
 
 # Variables
-N = 100
+N = 1000
 L = 1.9
 b_1 = 6.25e-9
 b_3 = 0.5
