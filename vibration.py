@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 class String:
   
   def __init__(self,note='C2',*args):
@@ -47,7 +47,7 @@ class String:
     self.y_minus_2n = np.zeros((self.N),dtype = float)
 
   def time_evolution(self):
-    F = 0
+    F = 0.00001
     hammer_length = 0.01
     hammer_position = 0.15*self.L
     Ms = 1
@@ -55,13 +55,26 @@ class String:
     n = 0
     beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
     endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
-    
+
     for i in range(beginwindow,endwindow):
         g[i] = 1.0/(endwindow-beginwindow)
-    
-    for i in range(2,self.N-2):
-      print(i)
-      self.y_plus_n[i] = self.a_1*self.y[i] + self.a_2*self.y_minus_n[i] + self.a_3*(self.y[i+1]+self.y[i-1]) \
-      + self.a_4*(self.y[i+2]+self.y[i-2]) + self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1]+self.y_minus_2n[i]) \
-      + (self.delta_t**2*self.N*F*g[i])/Ms
-    
+
+    for t in range(0,20):        
+        for i in range(2,self.N-2):
+          self.y_plus_n[i] = self.a_1*self.y[i] + self.a_2*self.y_minus_n[i] + self.a_3*(self.y[i+1]+self.y[i-1]) \
+          + self.a_4*(self.y[i+2]+self.y[i-2]) + self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1]+self.y_minus_2n[i]) \
+          + (self.delta_t**2*self.N*F*g[i])/Ms
+
+        if t == 2:
+            print(t)
+            F = 0
+
+        # Update new string heights to old ones
+        self.y_minus_2n = self.y_minus_n
+        self.y_minus_n = self.y
+        self.y = self.y_plus_n
+
+        # plotting. Only used for testing
+        x = np.linspace(0,self.L,self.N)
+        plt.plot(x,self.y)
+        plt.show()
