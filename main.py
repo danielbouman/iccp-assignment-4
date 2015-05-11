@@ -1,7 +1,11 @@
 # piano wire simulation
+from vibration import String
 
-import numpy as np
-import vibration as vib
+# Variables
+N = 100
+L = 1.9
+b_1 = 6.25e-9
+b_3 = 0.5
 
-
-# define variables
+string1 = String('c2')
+string1.time_evolution()
