@@ -5,9 +5,9 @@ import matplotlib.animation as animation
 class String:
   
   def __init__(self,note='C2',*args):
-    self.duration = 1000
+    self.duration = 10000
     self.delta_t = 1/(4*44e3)
-    # self.delta_t = 0.1
+    zeta_b = 1000
 
     # Choose constrains
     if str.lower(note) == 'c2':
@@ -56,6 +56,20 @@ class String:
     self.a_4 = (-1+b_1*self.delta_t+2*nu)/D
     self.a_5 = -nu/D
 
+
+    E = 1 + b_1*self.delta_t+zeta_b*self.r
+    self.b_R1 = (2-2*self.r**2*mu - 2*self.r**2)/E
+    self.b_R2 = (4*self.r**2*mu - 2*self.r**2)/E
+    self.b_R3 = (-2*self.r**2*mu)/E
+    self.b_R4 = (-1+b_1*self.delta_t + zeta_b*self.r)/E
+    self.b_RF = (self.delta_t**2/self.rho)/E
+
+    self.b_L1 = self.b_R1
+    self.b_L2 = self.b_R2
+    self.b_L3 = self.b_R3
+    self.b_L4 = self.b_R4
+    self.b_LF = self.b_RF
+
     # y_[plus/minus]_[n/2n] are string displacement vectors
     self.y_plus_n = np.zeros((self.N),dtype = float)
     self.y = np.zeros((self.N),dtype = float)
@@ -82,6 +96,19 @@ class String:
 
     for t in range(0,self.duration):
         # F = K/hammer_mass * np.abs(hammer_displacement - self.y)**p
+
+        self.y_plus_n[0] = self.b_L1*self.y[0]+self.b_L2*self.y[1]+self.b_L3*self.y[2] \
+        + self.b_L4*self.y_minus_n[0]+self.b_LF*0
+
+        self.y_plus_n[1] = self.a_1*(self.y[3]-self.y[1]+2*self.y[0])+self.a_2*(self.y[2]+self.y[0]) \
+          + self.a_3*self.y[1]+self.a_4*self.y_minus_n[1]+self.a_5*(self.y_minus_n[2]+self.y_minus_n[0])
+
+        self.y_plus_n[self.N-2] = self.a_1*(2*self.y[self.N-1]-self.y[self.N-2]+self.y[self.N-4])+self.a_2*(self.y[self.N-1]+self.y[self.N-3]) \
+          + self.a_3*self.y[self.N-2]+self.a_4*self.y_minus_n[self.N-2]+self.a_5*(self.y_minus_n[self.N-1]+self.y_minus_n[self.N-3])
+
+        self.y_plus_n[self.N-1] = self.b_R1*self.y[self.N-1]+self.b_R2*self.y[self.N-2]+self.b_R3*self.y[self.N-2] \
+        + self.b_R4*self.y_minus_n[self.N-1]+self.b_RF*0
+
         for i in range(2,self.N-2):
           self.y_plus_n[i] = self.a_1*(self.y[i+2]+self.y[i-2])+self.a_2*(self.y[i+1]+self.y[i-1]) \
           + self.a_3*self.y[i]+self.a_4*self.y_minus_n[i]+self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1]) \
@@ -93,6 +120,26 @@ class String:
 
         if t == 100:
             F = 0
+
+        if t == 200:
+            F = -950
+
+        if t == 210:
+            F = 0
+
+        if t == 500:
+            F = 70
+
+        if t == 700:
+            F = 0
+
+        if t == 1100:
+            F = 150
+
+        if t == 1200:
+            F = 0
+
+
 
         # Update new string heights to old ones
         self.time_evolved_string[:,t] = self.y[:]
@@ -116,7 +163,7 @@ class String:
         return line,
 
     ani = animation.FuncAnimation(fig, animate, np.arange(1, self.duration), init_func=init,
-        interval=35, blit=True,repeat=False)
+        interval=5, blit=True,repeat=False)
     plt.axis([0,self.L,-0.015,0.015])
     if saveAnimation == True:
       # Set up formatting for the movie files

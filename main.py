@@ -9,4 +9,4 @@ b_3 = 0.5
 
 string1 = String('c2')
 string1.time_evolution()
-string1.animate(saveAnimation=True)
+string1.animate(saveAnimation=False)
