@@ -191,22 +191,22 @@ class String:
       plt.show()
     return
 
-    def time_evolution_f90(self):
-           F = 0.0000
-           init_velocity = 1.0
-           hammer_length = 0.5
-           hammer_position = 0.15*self.L
-           hammer_displacement = 0.0
-           hammer_displacement_minus_n = -init_velocity*self.delta_t
-           hammer_mass = 1.0
-           K = 1.
-           p = 2.
-           g = np.zeros((self.N),dtype = float)
-           
-           n = 0
-           beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
-           endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
-           g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
-           
-           te.time_evolution(self.time_evolved_string,self.y,g,self.N,self.duration,self.Ms,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
-            
+  def time_evolution_f90(self):
+         F = 0.0000
+         init_velocity = 1.0
+         hammer_length = 0.5
+         hammer_position = 0.15*self.L
+         hammer_displacement = 0.0
+         hammer_displacement_minus_n = -init_velocity*self.delta_t
+         hammer_mass = 1.0
+         K = 1.
+         p = 2.
+         g = np.zeros((self.N),dtype = float)
+         
+         n = 0
+         beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
+         endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
+         g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+         
+         self.time_evolved_string = te.timeevolution(self.y,g,self.N,self.duration,self.Ms,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
+          
