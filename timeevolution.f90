@@ -52,7 +52,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
  t = 2
    
     y(1,t) = bL1*y(1,t-1)+bL2*y(2,t-1)+bL3*y(3,t-1)+bL4*initY(1)+bLF*0
-    y(2,t) = a1*(y(4,t-1)-y(2,t-1)+2*y(1)) + a2*(y(3,t-1)+y(1,t-1)) &
+    y(2,t) = a1*(y(4,t-1)-y(2,t-1)+2*y(1,t-1)) + a2*(y(3,t-1)+y(1,t-1)) &
  + a3*y(2,t-1) + a4*initY(2) + a5*(initY(3)+initY(1))
     y(N-1,t) = a1*(2*y(N,t-1)-y(N-1,t-1)+y(N-3,t-1)) &
  + a2*(y(N,t-1)+y(N-2,t-1)) + a3*y(N-1,t-1) + a4*initY(N-1) &
@@ -71,7 +71,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
 
 do t=3,(nTimeSteps+1)
     y(1,t) = bL1*y(1,t-1)+bL2*y(2,t-1)+bL3*y(3,t-1)+bL4*y(1,t-2)+bLF*0
-    y(2,t) = a1*(y(4,t-1)-y(2,t-1)+2*y(1)) + a2*(y(3,t-1)+y(1,t-1)) &
+    y(2,t) = a1*(y(4,t-1)-y(2,t-1)+2*y(1,t-1)) + a2*(y(3,t-1)+y(1,t-1)) &
  + a3*y(2,t-1) + a4*y(2,t-2) + a5*(y(3,t-2)+y(1,t-2))
     y(N-1,t) = a1*(2*y(N,t-1)-y(N-1,t-1)+y(N-3,t-1)) &
  + a2*(y(N,t-1)+y(N-2,t-1)) + a3*y(N-1,t-1) + a4*y(N-1,t-2) &
