@@ -113,7 +113,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
  bL1,bL2,bL3,bL4,bLF,a1,a2,a3,a4,a5,bR1,bR2,bR3,bR4,bRF,deltaT)
 
 
-  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT
+  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition
 
   real*8, intent(in)  :: bL1,bL2,bL3,bL4,bLF
   real*8, intent(in)  :: a1,a2,a3,a4,a5
@@ -123,7 +123,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   real*8, intent(out) :: bridgeY(N+1,nTimeSteps+1)
 
   real*8              :: F, y(N+1,3)
-  integer             :: i, t, localt
+  integer             :: i, t, localt, bridgeElement
 
   y = 0
   
