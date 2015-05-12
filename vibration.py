@@ -5,8 +5,8 @@ from scipy.io.wavfile import write
 
 class String:
   
-  def __init__(self,note='C2',*args):
-    self.duration = int(4*44e3)
+  def __init__(self,note,duration):
+    self.duration = int(duration*4*44e3)
     self.delta_t = 1/(4*44e3)
     zeta_b = 1000
     zeta_l = 1e20
@@ -23,12 +23,12 @@ class String:
       self.N = 521
     if str.lower(note) == 'c4':
       # Midrange note
-      self.L = 0.62
-      self.Ms = 3.93e-3
-      self.T = 750
-      b_1 = 1.1
-      b_2 = 2.7e-4
-      self.epsilon = 7.5e-6
+      self.L = 1.92
+      self.Ms = 39.3e-3
+      self.T = 670
+      b_1 = 0.5
+      b_2 = 6.25e-9
+      self.epsilon = 3.82e-6
       self.N = 140
     if str.lower(note) == 'c7':
       # Treble note
@@ -100,6 +100,8 @@ class String:
     beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
     endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
     g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+
+
 
     for t in range(0,self.duration):
         # F = K/hammer_mass * np.abs(hammer_displacement - self.y)**p
