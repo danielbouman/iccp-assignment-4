@@ -154,7 +154,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
 
 ! Transfer the bridge element string amplitudes to bridgeY:
   do i=1,3
-    bridgeY(i,t) = y(bridgeElement-2+i,t)
+    bridgeY(i,t) = y(bridgeElement-2+i,localt)
   end do
 
   y(:,localt-2) = y(:,localt-1)
@@ -180,7 +180,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
 
 ! Transfer the bridge element string amplitudes to bridgeY:
   do i=1,3
-    bridgeY(i,t) = y(bridgeElement-2+i,t)
+    bridgeY(i,t) = y(bridgeElement-2+i,localt)
   end do
 
   y(:,localt-2) = y(:,localt-1)
@@ -225,7 +225,7 @@ do t=3,(nTimeSteps+1)
 
 ! Transfer the bridge element string amplitudes to bridgeY:
   do i=1,3
-    bridgeY(i,t) = y(bridgeElement-2+i,t)
+    bridgeY(i,t) = y(bridgeElement-2+i,localt)
   end do
 
   y(:,localt-2) = y(:,localt-1)
