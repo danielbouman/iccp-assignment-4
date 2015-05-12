@@ -23,12 +23,12 @@ class String:
       self.N = 521
     if str.lower(note) == 'c4':
       # Midrange note
-      self.L = 1.92
+      self.L = 0.62
       self.Ms = 39.3e-3
       self.T = 670
-      b_1 = 0.5
-      b_2 = 6.25e-9
-      self.epsilon = 3.82e-6
+      b_1 = 1.1
+      b_2 = 2.7e-4
+      self.epsilon = 3.82e-5
       self.N = 140
     if str.lower(note) == 'c7':
       # Treble note
@@ -43,8 +43,8 @@ class String:
     self.rho = self.Ms/self.L
     self.c = np.sqrt(self.T/self.rho)
     self.delta_x = self.L/self.N
-    kappa_squared = self.epsilon*(self.c**2)*(self.L**2)
-    mu = kappa_squared/((self.delta_x**2)*(self.c**2))
+    self.kappa_squared = self.epsilon*(self.c**2)*(self.L**2)
+    mu = self.kappa_squared/((self.delta_x**2)*(self.c**2))
 
     D = 1+b_1*self.delta_t
     self.r = self.c*self.delta_t/self.delta_x

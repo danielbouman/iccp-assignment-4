@@ -45,7 +45,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
       y(i,t) = a1*(initY(i+2)+initY(i-2)) + a2*(initY(i+1) + initY(i-1)) &
  + a3*initY(i) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
  + deltaT*deltaT*N*F*g(i)/Ms
-    end do  
+    end do
 
  ! Now the second step:
  t = 2
@@ -63,7 +63,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
       y(i,t) = a1*(y(i+2,t-1)+y(i-2,t-1)) + a2*(y(i+1,t-1) + y(i-1,t-1)) &
  + a3*y(i,t-1) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
  + deltaT*deltaT*N*F*g(i)/Ms
-    end do  
+    end do
 
 
 ! Finally the Great Time Loop:
