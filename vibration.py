@@ -1,20 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 class String:
   
   def __init__(self,note='C2',*args):
-    
-    self.delta_t = 1/(16e3)
-    
+    self.duration = 1000    
+    self.delta_t = 1/(4*44e3)
+    # self.delta_t = 0.1
+
     # Choose constrains
     if str.lower(note) == 'c2':
       # Bass note
-      b_1 = 0.5
-      b_2 = 6.25e-9
-      self.N = 100
-      self.L = 1.9
-      self.Ms = 35
-      self.epsilon = 7.5e-9
+      b_1 = 0.25
+      b_2 = 7.5e-5
+      self.N = 521
+      self.L = 1.92
+      self.Ms = 35e-3
+      self.epsilon = 7.5e-6
       self.T = 750
       self.rho = self.Ms/self.L
       self.c = np.sqrt(self.T/self.rho)
@@ -35,23 +38,24 @@ class String:
       
 
 
-    self.delta_x = self.N/self.L
+    self.delta_x = self.L/self.N
     kappa_squared = self.epsilon*(self.c**2)*(self.L**2)
     mu = kappa_squared/((self.delta_x**2)*(self.c**2))
 
     D = 1+b_1*self.delta_t
-    r = self.c*self.delta_t/self.delta_x
-    if r> 1:
+    self.r = self.c*self.delta_t/self.delta_x
+    print(self.r)
+    if self.r> 1:
         raise ValueError("r is larger than 1, simulation is unstable. r should be smaller than 1.")
     if self.delta_t > (self.delta_x)/self.c:
-        raise ValueError("CCFL condition broken")
+        raise ValueError("CFL condition broken")
     
     nu = 2*b_2*(self.delta_t)/(self.delta_x**2)
     
 
-    self.a_1 = (-(r**2)*mu)/D
-    self.a_2 = (r**2+4*(r**2)*mu+nu)/D
-    self.a_3 = (2-2*(r**2)-6*(r**2)*mu-2*nu)/D
+    self.a_1 = (-(self.r**2)*mu)/D
+    self.a_2 = (self.r**2+4*(self.r**2)*mu+nu)/D
+    self.a_3 = (2-2*(self.r**2)-6*(self.r**2)*mu-2*nu)/D
     self.a_4 = (-1+b_1*self.delta_t+2*nu)/D
     self.a_5 = -nu/D
 
@@ -59,12 +63,13 @@ class String:
     self.y_plus_n = np.zeros((self.N),dtype = float)
     self.y = np.zeros((self.N),dtype = float)
     self.y_minus_n = np.zeros((self.N),dtype = float)
+    self.time_evolved_string = np.zeros((self.N,self.duration),dtype = float)
 
   def time_evolution(self):
 
     F = 0.0000
     init_velocity = 1.0
-    hammer_length = 0.01
+    hammer_length = 0.5
     hammer_position = 0.15*self.L
     hammer_displacement = 0.0
     hammer_displacement_minus_n = -init_velocity*self.delta_t
@@ -81,26 +86,65 @@ class String:
         g[i] = 1.0/(endwindow-beginwindow)
 
 
-    for t in range(0,2001):
+    # self.r = 0.4
+
+    a_10 = self.r**2
+    a_11 = 2-2*self.r**2
+
+    self.xAxis = np.linspace(0,self.L,self.N)
+    # self.y = 0.01*np.sin(2*np.pi*self.xAxis/self.L)
+    # self.y_minus_n = 0.01*np.sin(3*np.pi*self.xAxis/self.L)
+
+    for t in range(0,self.duration):
         # F = K/hammer_mass * np.abs(hammer_displacement - self.y)**p        
         for i in range(2,self.N-2):
           self.y_plus_n[i] = self.a_1*(self.y[i+2]+self.y[i-2])+self.a_2*(self.y[i+1]+self.y[i-1]) \
-          + self.a_3*self.y[i]+self.a_4*self.y_minus_n[i]+self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1])
+          + self.a_3*self.y[i]+self.a_4*self.y_minus_n[i]+self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1]) \
           + (self.delta_t**2*self.N*F*g[i])/self.Ms
         # hammer_displacement = 2*hammer_displacement - hammer_displacement_minus_n + F*delta_t**2
         if t == 1:
             print(t)
-            F = 0.5
+            F = 100.15
 
-        if t == 5:
+        if t == 100:
             F = 0
 
         # Update new string heights to old ones
+        self.time_evolved_string[:,t] = self.y[:]
         self.y_minus_n[:] = self.y[:]
         self.y[:] = self.y_plus_n[:]
 
-        # plotting. Only used for testing
-        x = np.linspace(0,self.L,self.N)
-        plt.plot(x,self.y)
-        plt.axis([0,self.L,-0.01,0.01])
-        plt.show()
+
+  def animate(self,saveAnimation=False):
+    # Time evolved probability
+    fig, ax = plt.subplots()
+    if saveAnimation == True:
+      # Set up formatting for the movie files
+      Writer = animation.writers['ffmpeg']
+      writer = Writer(fps=15, metadata=dict(artist='Bouman and Goodenough'))
+
+    line, = ax.plot(self.xAxis, np.sin(self.xAxis))
+
+    def animate(i):
+        line.set_ydata(self.time_evolved_string[:,10*i])  # update the data
+        return line,
+
+    #Init only required for blitting to give a clean slate.
+    def init():
+        line.set_ydata(np.ma.array(self.xAxis, mask=True))
+        return line,
+
+    ani = animation.FuncAnimation(fig, animate, np.arange(1, self.duration), init_func=init,
+        interval=35, blit=True,repeat=False)
+    plt.axis([0,self.L,-0.015,0.015])
+    # plt.plot(self.xAxis,ani)
+    if saveAnimation == True:
+      print("Saving animation...")
+      start = time.time()
+      ani.save(self.potentialName+'.mp4', writer=writer)
+      end = time.time()
+      print(end - start)
+      print("Done. Animation saved as "+self.potentialName+".mp4")
+    else:
+      plt.show()
+    return
