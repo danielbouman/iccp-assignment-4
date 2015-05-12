@@ -21,12 +21,11 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
   real*8, intent(in)  :: bR1,bR2,bR3,bR4,bRF
   integer, intent(in) :: N, nTimeSteps
 
-  real*8, intent(out), allocatable :: y(:,:)
+  real*8, intent(out) :: y(N+1,nTimeSteps+1)
 
   real*8              :: F
   integer             :: i, t
 
-  allocate( y(N+1,nTimeSteps+1) )
 
   
   !!! First step 1: !!!
