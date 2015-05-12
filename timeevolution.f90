@@ -45,7 +45,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
     do i=3,(N-1)
       y(i,t) = a1*(initY(i+2)+initY(i-2)) + a2*(initY(i+1) + initY(i-1)) &
  + a3*initY(i) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
- + deltaT*deltaT*N*F*g/Ms
+ + deltaT*deltaT*N*F*g(i)/Ms
     end do  
 
  ! Now the second step:
