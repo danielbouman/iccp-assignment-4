@@ -127,6 +127,8 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
 
   y = 0
   
+
+  bridgeElement = nint(bridgePosition*N)
   !!! First step 1: !!!
   t = 1
   localt = 3
