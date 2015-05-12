@@ -148,8 +148,10 @@ class String:
         self.y_minus_n[:] = self.y[:]
         self.y[:] = self.y_plus_n[:]
 
+    self.acceleration = np.diff(np.diff(self.time_evolved_string[self.N-1,:]))
+
   def saveSound(self,filename='string',amp=10000):
-    write(filename+'.wav',int(1/self.delta_t),string1.time_evolved_string[-3,:]*amp)
+    write(filename+'.wav',int(1/self.delta_t),self.acceleration*amp)
     
   def animate(self,saveAnimation=False):
     fig, ax = plt.subplots()
