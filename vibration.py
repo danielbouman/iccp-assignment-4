@@ -14,13 +14,13 @@ class String:
     # Choose constrains
     if str.lower(note) == 'c2':
       # Bass note
-      self.N = 521
       self.L = 1.92
       self.Ms = 35e-3
       self.T = 750
       b_1 = 0.25
       b_2 = 7.5e-5
       self.epsilon = 7.5e-6
+      self.N = 521
     if str.lower(note) == 'c4':
       # Midrange note
       self.L = 0.62
@@ -32,11 +32,13 @@ class String:
       self.N = 140
     if str.lower(note) == 'c7':
       # Treble note
-      b_1 = 0.5
-      b_2 = 2.6e-10
-      self.N = 16
       self.L = 0.09
-      self.epsilon = 8.67e-4
+      self.Ms = 0.467e-3
+      self.T = 750
+      b_1 = 9.17
+      b_2 = 2.1e-3
+      self.epsilon = 867e-4
+      self.N = 23
     
     self.rho = self.Ms/self.L
     self.c = np.sqrt(self.T/self.rho)
