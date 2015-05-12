@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from scipy.io.wavfile import write
 
 class String:
   
   def __init__(self,note='C2',*args):
-    self.duration = 10000
+    self.duration = int(4*44e3)
     self.delta_t = 1/(4*44e3)
     zeta_b = 1000
 
@@ -121,32 +122,35 @@ class String:
         if t == 100:
             F = 0
 
-        if t == 200:
-            F = -950
+        # if t == 200:
+        #     F = -950
 
-        if t == 210:
-            F = 0
+        # if t == 210:
+        #     F = 0
 
-        if t == 500:
-            F = 70
+        # if t == 500:
+        #     F = 70
 
-        if t == 700:
-            F = 0
+        # if t == 700:
+        #     F = 0
 
-        if t == 1100:
-            F = 150
+        # if t == 1100:
+        #     F = 150
 
-        if t == 1200:
-            F = 0
+        # if t == 1200:
+        #     F = 0
 
-
+        if np.mod(t,10000) == 0:
+          print(t)
 
         # Update new string heights to old ones
         self.time_evolved_string[:,t] = self.y[:]
         self.y_minus_n[:] = self.y[:]
         self.y[:] = self.y_plus_n[:]
 
-
+  def saveSound(self,filename='string',amp=10000):
+    write(filename+'.wav',int(1/self.delta_t),string1.time_evolved_string[-3,:]*amp)
+    
   def animate(self,saveAnimation=False):
     fig, ax = plt.subplots()
     self.xAxis = np.linspace(0,self.L,self.N)
