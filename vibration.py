@@ -9,26 +9,27 @@ class String:
     self.duration = int(4*44e3)
     self.delta_t = 1/(4*44e3)
     zeta_b = 1000
+    zeta_l = 1e20
 
     # Choose constrains
     if str.lower(note) == 'c2':
       # Bass note
-      b_1 = 0.25
-      b_2 = 7.5e-5
       self.N = 521
       self.L = 1.92
       self.Ms = 35e-3
-      self.epsilon = 7.5e-6
       self.T = 750
-      self.rho = self.Ms/self.L
-      self.c = np.sqrt(self.T/self.rho)
+      b_1 = 0.25
+      b_2 = 7.5e-5
+      self.epsilon = 7.5e-6
     if str.lower(note) == 'c4':
       # Midrange note
-      b_1 = 0.5
-      b_2 = 6.25e-9
-      self.N = 50
       self.L = 0.62
-      self.epsilon = 3.82e-5
+      self.Ms = 3.93e-3
+      self.T = 750
+      b_1 = 1.1
+      b_2 = 2.7e-4
+      self.epsilon = 7.5e-6
+      self.N = 140
     if str.lower(note) == 'c7':
       # Treble note
       b_1 = 0.5
@@ -36,7 +37,9 @@ class String:
       self.N = 16
       self.L = 0.09
       self.epsilon = 8.67e-4
-
+    
+    self.rho = self.Ms/self.L
+    self.c = np.sqrt(self.T/self.rho)
     self.delta_x = self.L/self.N
     kappa_squared = self.epsilon*(self.c**2)*(self.L**2)
     mu = kappa_squared/((self.delta_x**2)*(self.c**2))
@@ -58,18 +61,19 @@ class String:
     self.a_5 = -nu/D
 
 
-    E = 1 + b_1*self.delta_t+zeta_b*self.r
-    self.b_R1 = (2-2*self.r**2*mu - 2*self.r**2)/E
-    self.b_R2 = (4*self.r**2*mu - 2*self.r**2)/E
-    self.b_R3 = (-2*self.r**2*mu)/E
-    self.b_R4 = (-1+b_1*self.delta_t + zeta_b*self.r)/E
-    self.b_RF = (self.delta_t**2/self.rho)/E
-
-    self.b_L1 = self.b_R1
-    self.b_L2 = self.b_R2
-    self.b_L3 = self.b_R3
-    self.b_L4 = self.b_R4
-    self.b_LF = self.b_RF
+    b_R_denom = 1 + b_1*self.delta_t+zeta_b*self.r
+    self.b_R1 = (2-2*self.r**2*mu - 2*self.r**2)/b_R_denom
+    self.b_R2 = (4*self.r**2*mu - 2*self.r**2)/b_R_denom
+    self.b_R3 = (-2*self.r**2*mu)/b_R_denom
+    self.b_R4 = (-1+b_1*self.delta_t + zeta_b*self.r)/b_R_denom
+    self.b_RF = (self.delta_t**2/self.rho)/b_R_denom
+    
+    b_L_denom = 1 + b_1*self.delta_t+zeta_l*self.r
+    self.b_L1 = (2-2*self.r**2*mu - 2*self.r**2)/b_L_denom
+    self.b_L2 = (4*self.r**2*mu - 2*self.r**2)/b_L_denom
+    self.b_L3 = (-2*self.r**2*mu)/b_L_denom
+    self.b_L4 = (-1+b_1*self.delta_t + zeta_l*self.r)/b_L_denom
+    self.b_LF = (self.delta_t**2/self.rho)/b_L_denom
 
     # y_[plus/minus]_[n/2n] are string displacement vectors
     self.y_plus_n = np.zeros((self.N),dtype = float)
@@ -140,7 +144,7 @@ class String:
         # if t == 1200:
         #     F = 0
 
-        if np.mod(t,10000) == 0:
+        if np.mod(t,1000) == 0:
           print(t)
 
         # Update new string heights to old ones

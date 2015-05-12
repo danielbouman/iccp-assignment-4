@@ -10,4 +10,4 @@ b_3 = 0.5
 string1 = String('c2')
 string1.time_evolution()
 # string1.animate(saveAnimation=False)
-string1.saveSound('c2test',amp=10000)
+# string1.saveSound('c2test',amp=10000)
