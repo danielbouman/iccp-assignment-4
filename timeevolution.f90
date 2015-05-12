@@ -10,7 +10,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine time_evolution(outputY,initY,g,N,nTimeSteps,Ms, &
+subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
  bL1,bL2,bL3,bL4,bLF,a1,a2,a3,a4,a5,bR1,bR2,bR3,bR4,bRF,deltaT)
 
 
