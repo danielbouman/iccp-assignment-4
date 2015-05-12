@@ -63,7 +63,7 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
     do i=3,(N-1)
       y(i,t) = a1*(y(i+2,t-1)+y(i-2,t-1)) + a2*(y(i+1,t-1) + y(i-1,t-1)) &
  + a3*y(i,t-1) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
- + deltaT*deltaT*N*F*g/Ms
+ + deltaT*deltaT*N*F*g(i)/Ms
     end do  
 
 
@@ -82,7 +82,7 @@ do t=3,(nTimeSteps+1)
     do i=3,(N-1)
       y(i,t) = a1*(y(i+2,t-1)+y(i-2,t-1)) + a2*(y(i+1,t-1) + y(i-1,t-1)) &
  + a3*y(i,t-1) + a4*y(i,t-2) + a5*(y(i+1,t-2)+y(i-1,t-2)) &
- + deltaT*deltaT*N*F*g/Ms
+ + deltaT*deltaT*N*F*g(i)/Ms
     end do
 
   if (t==1) then
