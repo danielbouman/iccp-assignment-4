@@ -49,7 +49,6 @@ class String:
 
     D = 1+b_1*self.delta_t
     self.r = self.c*self.delta_t/self.delta_x
-    print(self.r)
     if self.r> 1:
         raise ValueError("r is larger than 1, simulation is unstable. r should be smaller than 1.")
     if self.delta_t > (self.delta_x)/self.c:
@@ -82,7 +81,7 @@ class String:
     self.y_plus_n = np.zeros((self.N),dtype = float)
     self.y = np.zeros((self.N),dtype = float)
     self.y_minus_n = np.zeros((self.N),dtype = float)
-    self.time_evolved_string = np.zeros((self.N,self.duration),dtype = float)
+    self.time_evolved_string = np.zeros((3,self.duration),dtype = float)
 
   def time_evolution(self):
 
@@ -207,6 +206,7 @@ class String:
          beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
          endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
          g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+         bridgeposition = 0.8   # value between 0 and 1
          
-         self.time_evolved_string = te.timeevolution(self.y,g,self.N,self.duration,self.Ms,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
+         self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
           
