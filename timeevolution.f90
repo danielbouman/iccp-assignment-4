@@ -193,22 +193,10 @@ do t=3,(nTimeSteps+1)
  + deltaT*deltaT*N*F*g(i)/Ms
     end do
 
-  if (t==1) then
-    F = 1.0015d2
+  if (t==10) then
+    F = 1.5d1
   else if (t==100) then
     F = 0d0
-  else if (t==200) then
-    F = -9.50d2
-  else if (t==210) then
-    F = 0
-  else if (t==500) then
-    F = 7.0d1
-  else if (t==700) then
-    F = 0
-  else if (t==1100) then
-    F = 150
-  else if (t==1200) then
-    F = 0
   end if
 
 ! Transfer the bridge element string amplitudes to bridgeY:

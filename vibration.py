@@ -7,6 +7,7 @@ import timeevolution as te
 class String:
   
   def __init__(self,note,duration):
+    self.note = note
     self.duration = int(duration*4*44e3)
     self.delta_t = 1/(4*44e3)
     zeta_b = 1000
@@ -158,8 +159,11 @@ class String:
 
     self.acceleration = np.diff(np.diff(self.time_evolved_string[self.N-1,:]))
 
-  def saveSound(self,filename='string',amp=10000):
-    write(filename+'.wav',int(1/self.delta_t),self.acceleration*amp)
+  def saveSound(self,extra_name=''):
+    scaled_data = np.int16(self.time_evolved_string[0,:]/np.max(np.abs(self.time_evolved_string[0,:])) * 32767)
+    write(self.note+'_string'+''+'.wav', int(4*44e3), scaled_data)
+    if extra_name != '':
+      write('string_'+extra_name+'.wav', int(4*44e3), scaled_data)
     
   def animate(self,saveAnimation=False):
     fig, ax = plt.subplots()
