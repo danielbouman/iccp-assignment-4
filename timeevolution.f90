@@ -120,7 +120,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   real*8, intent(in)  :: bR1,bR2,bR3,bR4,bRF
   integer, intent(in) :: N, nTimeSteps
 
-  real*8, intent(out) :: bridgeY(N+1,nTimeSteps+1)
+  real*8, intent(out) :: bridgeY(3,nTimeSteps+1)
 
   real*8              :: F, y(N+1,3)
   integer             :: i, t, localt, bridgeElement
