@@ -13,7 +13,7 @@ class String:
     zeta_b = 1000
     zeta_l = 1e20
 
-    # Choose constrains
+    # Choose paramters
     if str.lower(note) == 'c2':
       # Bass note
       self.L = 1.92
@@ -63,7 +63,6 @@ class String:
     self.a_4 = (-1+b_1*self.delta_t+2*nu)/D
     self.a_5 = -nu/D
 
-
     b_R_denom = 1 + b_1*self.delta_t+zeta_b*self.r
     self.b_R1 = (2-2*self.r**2*mu - 2*self.r**2)/b_R_denom
     self.b_R2 = (4*self.r**2*mu - 2*self.r**2)/b_R_denom
@@ -79,92 +78,36 @@ class String:
     self.b_LF = (self.delta_t**2/self.rho)/b_L_denom
 
     # y_[plus/minus]_[n/2n] are string displacement vectors
-    self.y_plus_n = np.zeros((self.N),dtype = float)
+    # self.y_plus_n = np.zeros((self.N),dtype = float)
+    # self.y_minus_n = np.zeros((self.N),dtype = float)
     self.y = np.zeros((self.N),dtype = float)
-    self.y_minus_n = np.zeros((self.N),dtype = float)
     self.time_evolved_string = np.zeros((3,self.duration),dtype = float)
 
-  def time_evolution(self):
-
-    F = 0.0000
-    init_velocity = 1.0
-    hammer_length = 0.5
-    hammer_position = 0.15*self.L
-    hammer_displacement = 0.0
-    hammer_displacement_minus_n = -init_velocity*self.delta_t
-    hammer_mass = 1.0
-    K = 1.
-    p = 2.
-    g = np.zeros((self.N),dtype = float)
-
-    n = 0
-    beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
-    endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
-    g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
-
-
-
-    for t in range(0,self.duration):
-        # F = K/hammer_mass * np.abs(hammer_displacement - self.y)**p
-
-        self.y_plus_n[0] = self.b_L1*self.y[0]+self.b_L2*self.y[1]+self.b_L3*self.y[2] \
-        + self.b_L4*self.y_minus_n[0]+self.b_LF*0
-
-        self.y_plus_n[1] = self.a_1*(self.y[3]-self.y[1]+2*self.y[0])+self.a_2*(self.y[2]+self.y[0]) \
-          + self.a_3*self.y[1]+self.a_4*self.y_minus_n[1]+self.a_5*(self.y_minus_n[2]+self.y_minus_n[0])
-
-        self.y_plus_n[self.N-2] = self.a_1*(2*self.y[self.N-1]-self.y[self.N-2]+self.y[self.N-4])+self.a_2*(self.y[self.N-1]+self.y[self.N-3]) \
-          + self.a_3*self.y[self.N-2]+self.a_4*self.y_minus_n[self.N-2]+self.a_5*(self.y_minus_n[self.N-1]+self.y_minus_n[self.N-3])
-
-        self.y_plus_n[self.N-1] = self.b_R1*self.y[self.N-1]+self.b_R2*self.y[self.N-2]+self.b_R3*self.y[self.N-2] \
-        + self.b_R4*self.y_minus_n[self.N-1]+self.b_RF*0
-
-        for i in range(2,self.N-2):
-          self.y_plus_n[i] = self.a_1*(self.y[i+2]+self.y[i-2])+self.a_2*(self.y[i+1]+self.y[i-1]) \
-          + self.a_3*self.y[i]+self.a_4*self.y_minus_n[i]+self.a_5*(self.y_minus_n[i+1]+self.y_minus_n[i-1]) \
-          + (self.delta_t**2*self.N*F*g[i])/self.Ms
-        # hammer_displacement = 2*hammer_displacement - hammer_displacement_minus_n + F*delta_t**2
-        if t == 1:
-            print(t)
-            F = 100.15
-
-        if t == 100:
-            F = 0
-
-        # if t == 200:
-        #     F = -950
-
-        # if t == 210:
-        #     F = 0
-
-        # if t == 500:
-        #     F = 70
-
-        # if t == 700:
-        #     F = 0
-
-        # if t == 1100:
-        #     F = 150
-
-        # if t == 1200:
-        #     F = 0
-
-        if np.mod(t,1000) == 0:
-          print(t)
-
-        # Update new string heights to old ones
-        self.time_evolved_string[:,t] = self.y[:]
-        self.y_minus_n[:] = self.y[:]
-        self.y[:] = self.y_plus_n[:]
-
-    self.acceleration = np.diff(np.diff(self.time_evolved_string[self.N-1,:]))
-
+  def time_evolution_f90(self):
+         F = 0.
+         init_velocity = 1.0
+         hammer_length = round(0.1/self.delta_x)
+         hammer_center_position = round(1/8*self.N)
+         hammer_displacement = 0.
+         hammer_displacement_minus_n = -init_velocity*self.delta_t
+         hammer_mass = 1.
+         K = 1.
+         p = 2.
+         g = np.zeros((self.N),dtype = float)
+         n = 0
+         beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
+         endwindow = int(np.floor(hammer_center_position+hammer_length/2))
+         g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+         bridgeposition = 0.8   # value between 0 and 1
+         
+         self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
+          
   def saveSound(self,extra_name=''):
     scaled_data = np.int16(self.time_evolved_string[0,:]/np.max(np.abs(self.time_evolved_string[0,:])) * 32767)
     write(self.note+'_string'+''+'.wav', int(4*44e3), scaled_data)
     if extra_name != '':
       write('string_'+extra_name+'.wav', int(4*44e3), scaled_data)
-    
+      
   def animate(self,saveAnimation=False):
     fig, ax = plt.subplots()
     self.xAxis = np.linspace(0,self.L,self.N)
@@ -193,24 +136,3 @@ class String:
     else:
       plt.show()
     return
-
-  def time_evolution_f90(self):
-         F = 0.0000
-         init_velocity = 1.0
-         hammer_length = 0.5
-         hammer_position = 0.15*self.L
-         hammer_displacement = 0.0
-         hammer_displacement_minus_n = -init_velocity*self.delta_t
-         hammer_mass = 1.0
-         K = 1.
-         p = 2.
-         g = np.zeros((self.N),dtype = float)
-         
-         n = 0
-         beginwindow = int(np.floor((hammer_position-hammer_length/2)*self.N/self.L))
-         endwindow = int(np.ceil((hammer_position+hammer_length/2)*self.N/self.L))
-         g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
-         bridgeposition = 0.8   # value between 0 and 1
-         
-         self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
-          
