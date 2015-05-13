@@ -85,21 +85,9 @@ do t=3,(nTimeSteps+1)
     end do
 
   if (t==1) then
-    F = 1.0015d2
+    F = 1.5d1
   else if (t==100) then
     F = 0d0
-  else if (t==200) then
-    F = -9.50d2
-  else if (t==210) then
-    F = 0
-  else if (t==500) then
-    F = 7.0d1
-  else if (t==700) then
-    F = 0
-  else if (t==1100) then
-    F = 150
-  else if (t==1200) then
-    F = 0
   end if
 
 end do
@@ -132,7 +120,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   !!! First step 1: !!!
   t = 1
   localt = 3
-!!!!!!!!!!!!!!!!! Magic numbers are highly discouraged, hence 
+!!!!!!!!!!!!!!!!! Magic numbers are highly discouraged, hence
 !!!!!!!!!!!!!!!!! localt having a constant value of 3 (which
 !!!!!!!!!!!!!!!!! helps continuity as well.
   F = 0
