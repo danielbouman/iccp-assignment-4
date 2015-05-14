@@ -27,7 +27,6 @@ subroutine time_evolution(y,initY,g,N,nTimeSteps,Ms, &
   integer             :: i, t
 
 
-  
   !!! First step 1: !!!
   t = 1
   F = 0
@@ -98,14 +97,14 @@ end subroutine
 !!!!!!!!!!!!
 
 subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition, &
- bL1,bL2,bL3,bL4,bLF,a1,a2,a3,a4,a5,bR1,bR2,bR3,bR4,bRF,deltaT,inputF,fduration)
-
+  deltaT,inputF,fduration,b1,b2,deltaX,r,mu,zetaB,zetaL,rho,b1Damped,b2Damped,dampT)
 
   real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition, inputF, fduration
+  real*8, intent(in)  :: b1, b2, deltaX, r, mu, zetaB, zetaL, rho, b1Damped, b2Damped, dampT
 
-  real*8, intent(in)  :: bL1,bL2,bL3,bL4,bLF
-  real*8, intent(in)  :: a1,a2,a3,a4,a5
-  real*8, intent(in)  :: bR1,bR2,bR3,bR4,bRF
+  real*8              :: bL1,bL2,bL3,bL4,bLF
+  real*8              :: a1,a2,a3,a4,a5
+  real*8              :: bR1,bR2,bR3,bR4,bRF
   integer, intent(in) :: N, nTimeSteps
 
   real*8, intent(out) :: bridgeY(3,nTimeSteps+1)
@@ -113,8 +112,34 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   real*8              :: F, y(N+1,3)
   integer             :: i, t, localt, bridgeElement
 
+  real*8              :: D, nu, b_R_denom, b_L_denom
+
   y = 0
+
+  !!! Constants
+
+  D = 1+b1*deltaT
+  nu = (2*b2*deltaT)/(deltaX**2)
+    
+  a1 = (-(r**2)*mu)/D
+  a2 = (r**2+4*(r**2)*mu+nu)/D
+  a3 = (2-2*(r**2)-6*(r**2)*mu-2*nu)/D
+  a4 = (-1+b1*deltaT+2*nu)/D
+  a5 = -nu/D
+
+  b_R_denom = 1 + b1*deltaT+zetaB*r
+  bR1 = (2-2*r**2*mu - 2*r**2)/b_R_denom
+  bR2 = (4*r**2*mu - 2*r**2)/b_R_denom
+  bR3 = (-2*r**2*mu)/b_R_denom
+  bR4 = (-1+b1*deltaT + zetaB*r)/b_R_denom
+  bRF = (deltaT**2/rho)/b_R_denom
   
+  b_L_denom = 1 + b1*deltaT+zetaL*r
+  bL1 = (2-2*r**2*mu - 2*r**2)/b_L_denom
+  bL2 = (4*r**2*mu - 2*r**2)/b_L_denom
+  bL3 = (-2*r**2*mu)/b_L_denom
+  bL4 = (-1+b1*deltaT + zetaL*r)/b_L_denom
+  bLF = (deltaT**2/rho)/b_L_denom
 
   bridgeElement = nint(bridgePosition*N)
   !!! First step 1: !!!
@@ -197,6 +222,32 @@ do t=3,(nTimeSteps+1)
     F = inputF
   else if (t==10+fduration) then
     F = 0d0
+  end if
+
+  if (t==dampT) then
+    !!! Damped constants
+    D = 1+b1Damped*deltaT
+    nu = (2*b2Damped*deltaT)/(deltaX**2)
+      
+    a1 = (-(r**2)*mu)/D
+    a2 = (r**2+4*(r**2)*mu+nu)/D
+    a3 = (2-2*(r**2)-6*(r**2)*mu-2*nu)/D
+    a4 = (-1+b1Damped*deltaT+2*nu)/D
+    a5 = -nu/D
+  
+    b_R_denom = 1 + b1Damped*deltaT+zetaB*r
+    bR1 = (2-2*r**2*mu - 2*r**2)/b_R_denom
+    bR2 = (4*r**2*mu - 2*r**2)/b_R_denom
+    bR3 = (-2*r**2*mu)/b_R_denom
+    bR4 = (-1+b1Damped*deltaT + zetaB*r)/b_R_denom
+    bRF = (deltaT**2/rho)/b_R_denom
+    
+    b_L_denom = 1 + b1Damped*deltaT+zetaL*r
+    bL1 = (2-2*r**2*mu - 2*r**2)/b_L_denom
+    bL2 = (4*r**2*mu - 2*r**2)/b_L_denom
+    bL3 = (-2*r**2*mu)/b_L_denom
+    bL4 = (-1+b1Damped*deltaT + zetaL*r)/b_L_denom
+    bLF = (deltaT**2/rho)/b_L_denom
   end if
 
 ! Transfer the bridge element string amplitudes to bridgeY:
