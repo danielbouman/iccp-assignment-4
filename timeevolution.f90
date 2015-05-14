@@ -150,6 +150,9 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   bL4 = (-1+b1*deltaT + zetaL*r)/b_L_denom
   bLF = (deltaT**2/rho)/b_L_denom
 
+  tension = (k*deltaX*rho/deltaT)**2
+  bendingPrefactor = mu*tension*deltaX*deltaX
+  
   bridgeElement = nint(bridgePosition*N)
   !!! First step 1: !!!
   t = 1
