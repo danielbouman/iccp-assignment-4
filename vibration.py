@@ -8,8 +8,8 @@ class String:
   
   def __init__(self,note,duration):
     self.note = note
-    self.duration = int(duration*4*44e3)
-    self.delta_t = 1/(4*44e3)
+    self.duration = int(duration*4*44.1e3)
+    self.delta_t = 1/(4*44.1e3)
     zeta_b = 1000
     zeta_l = 1e20
 
@@ -26,12 +26,30 @@ class String:
     if str.lower(note) == 'c4':
       # Midrange note
       self.L = 0.62
-      self.Ms = 39.3e-3
-      self.T = 670
+      self.Ms = 3.93e-3
+      self.T = 650.8
       b_1 = 1.1
       b_2 = 2.7e-4
       self.epsilon = 3.82e-5
       self.N = 140
+    if str.lower(note) == 'e4':
+      # Midrange note
+      self.L = 0.466
+      self.Ms = 3.81e-3
+      self.T = 750.8
+      b_1 = 1.5
+      b_2 = 4.7e-4
+      self.epsilon = 4.12e-5
+      self.N = 100
+    if str.lower(note) == 'g4':
+      # Midrange note
+      self.L = 0.406
+      self.Ms = 3.31e-3
+      self.T = 801.8
+      b_1 = 1.8
+      b_2 = 5.7e-4
+      self.epsilon = 4.92e-5
+      self.N = 100
     if str.lower(note) == 'c7':
       # Treble note
       self.L = 0.09
@@ -77,32 +95,32 @@ class String:
     self.b_L4 = (-1+b_1*self.delta_t + zeta_l*self.r)/b_L_denom
     self.b_LF = (self.delta_t**2/self.rho)/b_L_denom
 
-    # y_[plus/minus]_[n/2n] are string displacement vectors
-    # self.y_plus_n = np.zeros((self.N),dtype = float)
-    # self.y_minus_n = np.zeros((self.N),dtype = float)
     self.y = np.zeros((self.N),dtype = float)
     self.time_evolved_string = np.zeros((3,self.duration),dtype = float)
 
   def time_evolution_f90(self):
-         F = 0.
-         init_velocity = 1.0
-         hammer_length = round(0.1/self.delta_x)
-         hammer_center_position = round(1/8*self.N)
-         hammer_displacement = 0.
-         hammer_displacement_minus_n = -init_velocity*self.delta_t
-         hammer_mass = 1.
-         K = 1.
-         p = 2.
-         g = np.zeros((self.N),dtype = float)
-         n = 0
-         beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
-         endwindow = int(np.floor(hammer_center_position+hammer_length/2))
-         g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
-         bridgeposition = 0.8   # value between 0 and 1
-         
-         self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t)
-          
-  def saveSound(self,extra_name=''):
+    F = 15.
+    durationF = 90
+    init_velocity = 1.0
+    hammer_length = round(0.1/self.delta_x)
+    hammer_center_position = round(1/8*self.N)
+    hammer_displacement = 0.
+    hammer_displacement_minus_n = -init_velocity*self.delta_t
+    hammer_mass = 1.
+    K = 1.
+    p = 2.
+    g = np.zeros((self.N),dtype = float)
+    n = 0
+    beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
+    endwindow = int(np.floor(hammer_center_position+hammer_length/2))
+    g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+    bridgeposition = 0.8   # value between 0 and 1
+    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.b_L1,self.b_L2,self.b_L3,self.b_L4,self.b_LF,self.a_1,self.a_2,self.a_3,self.a_4,self.a_5,self.b_R1,self.b_R2,self.b_R3,self.b_R4,self.b_RF,self.delta_t,F,durationF)
+
+  def getWave(self):
+    return self.time_evolved_string[0,:]
+  
+  def exportSound(self,extra_name=''):
     scaled_data = np.int16(self.time_evolved_string[0,:]/np.max(np.abs(self.time_evolved_string[0,:])) * 32767)
     write(self.note+'_string'+''+'.wav', int(4*44e3), scaled_data)
     if extra_name != '':
@@ -136,3 +154,16 @@ class String:
     else:
       plt.show()
     return
+  
+class Chord:
+  def createChord(self,*args):
+    if len(args) == 1:
+      self.notesCombined = args[0]
+    if len(args) == 2:
+      self.notesCombined = np.add(args[0],args[1])
+    if len(args) == 3:
+      self.notesCombined = np.add(args[0],np.add(args[1],args[2]))
+      
+  def exportSound(self,name=''):
+    scaled_chord = np.int16(self.notesCombined/np.max(np.abs(self.notesCombined)) * 32767)
+    write('chord_'+name+'.wav', int(4*44e3), scaled_chord)

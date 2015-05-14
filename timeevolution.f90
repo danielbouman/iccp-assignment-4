@@ -98,10 +98,10 @@ end subroutine
 !!!!!!!!!!!!
 
 subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition, &
- bL1,bL2,bL3,bL4,bLF,a1,a2,a3,a4,a5,bR1,bR2,bR3,bR4,bRF,deltaT)
+ bL1,bL2,bL3,bL4,bLF,a1,a2,a3,a4,a5,bR1,bR2,bR3,bR4,bRF,deltaT,inputF,fduration)
 
 
-  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition
+  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition, inputF, fduration
 
   real*8, intent(in)  :: bL1,bL2,bL3,bL4,bLF
   real*8, intent(in)  :: a1,a2,a3,a4,a5
@@ -122,7 +122,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   localt = 3
 !!!!!!!!!!!!!!!!! Magic numbers are highly discouraged, hence
 !!!!!!!!!!!!!!!!! localt having a constant value of 3 (which
-!!!!!!!!!!!!!!!!! helps continuity as well.
+!!!!!!!!!!!!!!!!! helps continuity as well.)
   F = 0
 
     y(1,localt) = bL1*initY(1)+bL2*initY(2)+bL3*initY(3)+bL4*initY(1)+bLF*0
@@ -194,8 +194,8 @@ do t=3,(nTimeSteps+1)
     end do
 
   if (t==10) then
-    F = 1.5d1
-  else if (t==100) then
+    F = inputF
+  else if (t==10+fduration) then
     F = 0d0
   end if
 
