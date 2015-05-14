@@ -9,6 +9,7 @@ __pycache__/
 # Testing
 test/
 samples/
+*.wav
 
 # Distribution / packaging
 .Python
