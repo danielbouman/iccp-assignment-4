@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.io.wavfile import write
 import timeevolution as te
+import csv
 
 class String:
 
@@ -16,187 +17,22 @@ class String:
     self.delta_t = 1/(4*44e3)
     self.duration = int(duration/self.delta_t)
     
-    if str.lower(note) == 'c2':
-      # Bass note
-      self.L = 1.92
-      self.Ms = 3.5e-3
-      self.T = 750
-      self.b_1 = 0.25
-      self.b_2 = 7.5e-5
-      self.epsilon = 7.5e-6
-      self.N = 523
-    if str.lower(note) == 'c4':
-      # Midrange note
-      self.L = 0.62
-      self.Ms = 3.93e-3
-      self.T = 650.8
-      self.b_1 = 1.1
-      self.b_2 = 2.7e-4
-      self.epsilon = 3.82e-5
-      self.N = 140
-    if str.lower(note) == 'd4':
-      # Midrange note
-      self.L = 0.543
-      self.Ms = 3.86e-3
-      self.T = 703.5
-      self.b_1 = 1.25
-      self.b_2 = 2.7e-4
-      self.epsilon = 3.82e-5
-      self.N = 140
-    if str.lower(note) == 'e4':
-      # Midrange note
-      self.L = 0.466
-      self.Ms = 3.81e-3
-      self.T = 750.8
-      self.b_1 = 1.5
-      self.b_2 = 4.7e-4
-      self.epsilon = 4.12e-5
-      self.N = 100
-    if str.lower(note) == 'f4':
-      # Midrange note
-      self.L = 0.458
-      self.Ms = 3.51e-3
-      self.T = 756.8
-      self.b_1 = 1.7
-      self.b_2 = 4.9e-4
-      self.epsilon = 4.29e-5
-      self.N = 70
-    if str.lower(note) == 'g4':
-      # Midrange note
-      self.L = 0.406
-      self.Ms = 3.31e-3
-      self.T = 801.8
-      self.b_1 = 1.8
-      self.b_2 = 5.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 90
-    if str.lower(note) == 'a4':
-      # Midrange note
-      self.L = 0.3576
-      self.Ms = 3.062e-3
-      self.T = 809.9
-      self.b_1 = 1.3
-      self.b_2 = 2.5e-4
-      self.epsilon = 5.12e-5
-      self.N = 49
-    if str.lower(note) == 'b4':
-      # Midrange note
-      self.L = 0.2876
-      self.Ms = 3.068e-3
-      self.T = 819.0
-      self.b_1 = 1.3
-      self.b_2 = 2.5e-4
-      self.epsilon = 5.12e-5
-      self.N = 45
-    if str.lower(note) == 'g4_2':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 1.8
-      self.b_2 = 5.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 40
-    if str.lower(note) == 'g4_3':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 3.8
-      self.b_2 = 11.7e-4
-      self.epsilon = 14.92e-5
-      self.N = 40
-    if str.lower(note) == 'g4_4':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 2.8
-      self.b_2 = 8.2e-4
-      self.epsilon = 9.92e-5
-      self.N = 40
-    if str.lower(note) == 'g4_5':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 0.8
-      self.b_2 = 2.2e-4
-      self.epsilon = 1.92e-5
-      self.N = 40
-    if str.lower(note) == 'g4_6':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 0.4
-      self.b_2 = 1.1e-4
-      self.epsilon = 0.42e-5
-      self.N = 40
-    if str.lower(note) == 'g4_7':
-      # Midrange note
-      self.L = 0.522
-      self.Ms = 2.41e-3
-      self.T = 735.8
-      self.b_1 = 0.2
-      self.b_2 = 0.1e-4
-      self.epsilon = 2.42e-4
-      self.N = 40
-    if str.lower(note) == 'g4_8':
-      # Midrange note
-      self.L = 0.406
-      self.Ms = 3.31e-3
-      self.T = 801.8
-      self.b_1 = 1.8
-      self.b_2 = 5.7e-4
-      self.epsilon = 8.92e-4
-      self.N = 49
-    if str.lower(note) == 'g4_9':
-      # Midrange note
-      self.L = 0.406
-      self.Ms = 3.31e-3
-      self.T = 801.8
-      self.b_1 = 0.8
-      self.b_2 = 5.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 100
-    if str.lower(note) == 'g4_10':
-      # Midrange note
-      self.L = 0.406
-      self.Ms = 3.31e-3
-      self.T = 801.8
-      self.b_1 = 1.8
-      self.b_2 = 35.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 100
-    if str.lower(note) == 'g5':
-      # Treble note
-      self.L = 0.165
-      self.Ms = 2.53e-3
-      self.T = 973.8
-      self.b_1 = 1.8
-      self.b_2 = 35.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 55
-    if str.lower(note) == 'c7':
-      # Treble note
-      self.L = 0.09
-      self.Ms = 0.467e-3
-      self.T = 750
-      self.b_1 = 9.17
-      self.b_2 = 2.1e-3
-      self.epsilon = 867e-4
-      self.N = 5
-    if str.lower(note) == 'g3':
-      # Midrange note
-      self.L = 0.925
-      self.Ms = 4.9e-3
-      self.T = 670.8
-      self.b_1 = 1.8
-      self.b_2 = 5.7e-4
-      self.epsilon = 4.92e-5
-      self.N = 150
-    
+    # Import note parameters from csv file
+    with open('notes.csv', mode='r') as infile:
+      reader = csv.reader(infile)
+      notesDict = {rows[0]:rows[1:] for rows in reader}
+      
+    try:
+      self.L = float(notesDict[note][0])
+      self.Ms = float(notesDict[note][1])
+      self.T = float(notesDict[note][2])
+      self.b_1 = float(notesDict[note][3])
+      self.b_2 = float(notesDict[note][4])
+      self.epsilon = float(notesDict[note][5])
+      self.N = float(notesDict[note][6])
+    except KeyError:
+      raise KeyError('There are no parameters found for the note '+note+'. Add them to notes.csv')
+
     # Define general parameters
     self.rho = self.Ms/self.L
     self.c = np.sqrt(self.T/self.rho)
@@ -207,9 +43,9 @@ class String:
     
     # Stability checks
     if self.r > 1:
-        raise ValueError("Courant–Friedrichs–Lewy (CFL) condition is not met. \n Choose smaller time step or larger time steps.")
+      raise ValueError("Courant–Friedrichs–Lewy (CFL) condition is not met. \n Choose smaller time step or larger time steps.")
     if self.delta_t > self.delta_x/self.c:
-        raise ValueError("Upper bound for the time step reached.\n Choose larger time steps or smaller spacial steps.")
+      raise ValueError("Upper bound for the time step reached.\n Choose larger time steps or smaller spacial steps.")
     
     # Preallocation of string deflection arrays
     self.y = np.zeros((self.N),dtype = float)
@@ -218,8 +54,8 @@ class String:
   """ Time evolution of the string. The discretized differential equation is calculated in a Fortran module. """
   def time_evolution_f90(self,damping=1,dampT=0):
     
-    zeta_b = 1000   # Left-end normalized impedance
-    zeta_l = 1e20   # Bridge normalized impedance
+    zeta_b = 1000   # Bridge normalized impedance
+    zeta_l = 1e20   # Left-end normalized impedance
     
     # Hammer
     F = 15.
