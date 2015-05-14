@@ -11,6 +11,9 @@ test/
 samples/
 *.wav
 
+# Fortran
+*.*~
+
 # Distribution / packaging
 .Python
 env/
