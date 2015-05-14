@@ -6,6 +6,10 @@ __pycache__/
 # iPython notebook
 *.ipynb
 
+# Testing
+test/
+samples/
+
 # Distribution / packaging
 .Python
 env/
