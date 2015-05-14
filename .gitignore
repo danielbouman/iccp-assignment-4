@@ -9,6 +9,10 @@ __pycache__/
 # Testing
 test/
 samples/
+*.wav
+
+# Fortran
+*.*~
 
 # Distribution / packaging
 .Python
