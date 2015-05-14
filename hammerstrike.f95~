@@ -1,0 +1,9 @@
+module HammerStrike
+
+  implicit none
+  private
+
+  public RigidHammerStrike
+
+  
+  
