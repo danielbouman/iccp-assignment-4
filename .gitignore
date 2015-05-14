@@ -2,10 +2,6 @@
 __pycache__/
 *.pyo
 *.pyc
-*.pyd
-
-# C extensions
-*.so
 
 # iPython notebook
 *.ipynb
