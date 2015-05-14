@@ -97,15 +97,21 @@ end subroutine
 !!!!!!!!!!!!
 
 subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition, &
-  deltaT,inputF,fduration,b1,b2,deltaX,r,mu,zetaB,zetaL,rho,b1Damped,b2Damped,dampT)
+     deltaT,inputF,fduration,b1,b2,deltaX,r,mu,zetaB,zetaL,rho,b1Damped,b2Damped,dampT, &
+     initialHammerheight,initialHammerVelocity,k,b,hammerMass)
 
-  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition, inputF, fduration
-  real*8, intent(in)  :: b1, b2, deltaX, r, mu, zetaB, zetaL, rho, b1Damped, b2Damped, dampT
+  real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition, inputF, fduration, k, b
+  real*8, intent(in)  :: b1, b2, deltaX, r, mu, zetaB, zetaL, rho, b1Damped, b2Damped, dampT, initialHammerHeight, &
+       initialHammerVelocity, hammerMass 
 
   real*8              :: bL1,bL2,bL3,bL4,bLF
   real*8              :: a1,a2,a3,a4,a5
   real*8              :: bR1,bR2,bR3,bR4,bRF
+
+  real*8              :: hammerHeight, hammerVelocity, hammerForce, lastHammerVelocity, compression, &
+                              stringForce(size(initY,1)), bendingPrefactor, tension
   integer, intent(in) :: N, nTimeSteps
+  logical             :: hammerDone
 
   real*8, intent(out) :: bridgeY(3,nTimeSteps+1)
 
@@ -115,6 +121,9 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   real*8              :: D, nu, b_R_denom, b_L_denom
 
   y = 0
+  hammerHeight = initialHammerHeight
+  hammerVelocity = initialHammerVelocity
+  hammerForce = 0
 
   !!! Constants
 
@@ -218,7 +227,14 @@ do t=3,(nTimeSteps+1)
  + deltaT*deltaT*N*F*g(i)/Ms
     end do
 
-  if (t==10) then
+    if (hammerDone.eqv..FALSE.) then
+      call rigid_hammer_strike(y(:,localt),hammerHeight,hammerMass,hammerVelocity,hammerForce, &
+         lastHammerVelocity,compression,deltaT,g,stringForce,hammerDone,tension,bendingPrefactor, &
+         k,b,rho,deltaX)
+    end if
+    
+
+    if (t==10) then
     F = inputF
   else if (t==10+fduration) then
     F = 0d0

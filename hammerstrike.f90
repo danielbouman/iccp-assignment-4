@@ -9,13 +9,13 @@ contains
 
 
   subroutine rigid_hammer_strike(y,hammerHeight,hammerMass,hammerVelocity,hammerForce,lastHammerVelocity,compression,deltaT, &
-       profile,force,hammerDone,tension,bendingPrefactor,k,b,rho,deltaX,pstringmin1)
+       g,force,hammerDone,tension,bendingPrefactor,k,b,rho,deltaX)
 
     real*8, intent(inout) :: y(:), hammerHeight, hammerVelocity, lastHammerVelocity, compression, force(:)
     real*8, intent(inout) :: hammerForce
-    real*8, intent(in)    :: profile(:), hammerMass, bendingPrefactor, rho, deltaT, deltaX, tension, k, b
+    real*8, intent(in)    :: g(:), hammerMass, bendingPrefactor, rho, deltaT, deltaX, tension, k, b
     real*8                :: surface, oldforce(size(force,1)), oldcompression, comppowbp1, oldcomppowbp1, netforce, &
-         oldHammerHeight, pstring, pstringmin1
+         oldHammerHeight, pstring, pstringmin1, profile(size(g,1))
     logical, intent(out)  :: hammerDone
     logical               :: contact(size(y,1))
     integer               :: i, j, nContactElements
@@ -25,6 +25,7 @@ contains
     nContactElements = 0
     hammerDone = .FALSE.
     oldHammerHeight = hammerHeight
+    profile = g-maxval(g)
     hammerHeight = hammerHeight + hammerVelocity*deltaT + hammerForce*deltaT**2/(2*hammerMass)
     forall (i=1:size(y,1),y(i)<hammerHeight+profile(i)-compression)
        y(i) = hammerHeight+profile(i)-compression
