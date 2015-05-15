@@ -237,11 +237,6 @@ do t=3,(nTimeSteps+1)
     end if
     
 
-    if (t==10) then
-    F = inputF
-  else if (t==10+fduration) then
-    F = 0d0
-  end if
 
   if (t==dampT) then
     !!! Damped constants
