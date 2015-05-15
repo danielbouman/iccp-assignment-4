@@ -84,7 +84,7 @@ class String:
     dampIndex = dampT/self.delta_t
     
     # Actual time evolution of the string
-    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex,initialhammerheight,initialhammervelocity,self.hammerK,self.hammerP,self.hammerM)
+    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,self.g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex,initialhammerheight,initialhammervelocity,self.hammerK,self.hammerP,self.hammerM)
 
   """ Export note to a wave data for creating a chord. """
   def getWave(self):
