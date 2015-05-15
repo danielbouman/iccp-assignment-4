@@ -351,7 +351,7 @@ subroutine rigid_hammer(y,hammerHeight,hammerMass,hammerVelocity,hammerForce,del
     
     hammerVelocity = hammerVelocity + k*nContactElements*deltaT*(lastcompression+compression)/(2*hammerMass)
     vy = vy + (k*(lastcompression+compression) + oldstringforce)*deltaT/(2*rho*deltaX)
-    stringforce = -stringforce
+    stringforce = k*compression
   end subroutine rigid_hammer
   
 
