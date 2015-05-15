@@ -325,7 +325,7 @@ subroutine rigid_hammer(y,hammerHeight,hammerMass,hammerVelocity,hammerForce,del
        stringforce(j) = stringforce(j) - tension*(y(j-1)-2*y(j)+y(j+1))
     end forall
     
-    y = 2*y - vy*deltaT + (k*lastCompression + stringforce)/(2*rho*deltaX)
+    y = y - vy*deltaT + (k*lastCompression + stringforce)/(2*rho*deltaX)
 
 !CALCULATEFORCES
 
