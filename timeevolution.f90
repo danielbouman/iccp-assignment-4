@@ -175,7 +175,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
     do i=3,(N-1)
       y(i,localt) = a1*(initY(i+2)+initY(i-2)) + a2*(initY(i+1) + initY(i-1)) &
  + a3*initY(i) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
- - deltaT*deltaT*N*stringForce(i)/Ms
+ + deltaT*deltaT*N*stringForce(i)/Ms
     end do
 
 ! Transfer the bridge element string amplitudes to bridgeY:
@@ -201,7 +201,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
     do i=3,(N-1)
       y(i,localt) = a1*(y(i+2,localt-1)+y(i-2,localt-1)) + a2*(y(i+1,localt-1) + y(i-1,localt-1)) &
  + a3*y(i,localt-1) + a4*initY(i) + a5*(initY(i+1)+initY(i-1)) &
- - deltaT*deltaT*N*stringForce(i)/Ms
+ + deltaT*deltaT*N*stringForce(i)/Ms
     end do
 
 ! Transfer the bridge element string amplitudes to bridgeY:
@@ -228,7 +228,7 @@ do t=3,(nTimeSteps+1)
     do i=3,(N-1)
       y(i,localt) = a1*(y(i+2,localt-1)+y(i-2,localt-1)) + a2*(y(i+1,localt-1) + y(i-1,localt-1)) &
  + a3*y(i,localt-1) + a4*y(i,localt-2) + a5*(y(i+1,localt-2)+y(i-1,localt-2)) &
- - deltaT*deltaT*N*stringForce(i)/Ms
+ + deltaT*deltaT*N*stringForce(i)/Ms
     end do
 
     if (hammerDone.eqv..FALSE.) then
@@ -329,12 +329,13 @@ end subroutine
     comppowbp1 = (netforce+hammerForce)*(hammerHeight-oldHammerHeight)/2 &
          + (-pstring**2+pstringmin1**2)/(2*rho*deltaX*nContactElements) &
          - (pstring-pstringmin1)**2/(2*hammerMass)
-    comppowbp1 = comppowbp1 + comppowbp1*(b+1)/k
+    comppowbp1 = comppowbp1 + oldcomppowbp1*(b+1)/k
     compression = comppowbp1**(1/(b+1))
     
     hammerHeight = hammerHeight + oldcompression - compression
     hammerForce = netforce - k*comppowbp1/compression
 
+    print *, hammerHeight, hammerVelocity, hammerForce, compression
   end subroutine rigid_hammer_strike
 
 
