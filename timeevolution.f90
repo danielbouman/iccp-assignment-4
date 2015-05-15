@@ -1,7 +1,7 @@
 module TimeEvolution
 
 implicit none
-private rigid_hammer_strike
+public rigid_hammer_strike
 
 public time_evolution
 public time_evolution_bridge
@@ -102,7 +102,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
 
   real*8, intent(in)  :: initY(:), g(:), Ms, deltaT, bridgePosition, inputF, fduration, k, b
   real*8, intent(in)  :: b1, b2, deltaX, r, mu, zetaB, zetaL, rho, b1Damped, b2Damped, dampT, initialHammerHeight, &
-       initialHammerVelocity, hammerMass 
+       initialHammerVelocity, hammerMass
 
   real*8              :: bL1,bL2,bL3,bL4,bLF
   real*8              :: a1,a2,a3,a4,a5

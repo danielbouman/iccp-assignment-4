@@ -61,8 +61,13 @@ class String:
     F = 15.
     durationF = 90
     
-    hammer_length = round(0.1/self.delta_x)
-    hammer_center_position = round(1/8*self.N)
+    initialhammerheight = 0.005
+    initialhammervelocity = 3
+    self.hammerK = 4.5e9
+    self.hammerP = 2.5
+    self.hammerM = 2.97e-3
+    hammer_length = round(0.03/self.delta_x)
+    hammer_center_position = round(1/7*self.N)
     
     beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
     endwindow = int(np.floor(hammer_center_position+hammer_length/2))
@@ -78,7 +83,7 @@ class String:
     dampIndex = dampT/self.delta_t
     
     # Actual time evolution of the string
-    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex)
+    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex,initialhammerheight,initialhammervelocity,self.hammerK,self.hammerP,self.hammerM)
 
   """ Export note to a wave data for creating a chord. """
   def getWave(self):

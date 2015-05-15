@@ -1,0 +1,85 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module timeevolution ! in 
+    interface  ! in :timeevolution
+        module hammerstrike ! in :timeevolution:hammerstrike.f90
+            subroutine rigid_hammer_strike(y,hammerheight,hammermass,hammervelocity,hammerforce,lasthammervelocity,compression,deltat,g,force,hammerdone,tension,bendingprefactor,k,b,rho,deltax) ! in :timeevolution:hammerstrike.f90:hammerstrike
+                real*8 dimension(:),intent(inout) :: y
+                real*8 intent(inout) :: hammerheight
+                real*8 intent(in) :: hammermass
+                real*8 intent(inout) :: hammervelocity
+                real*8 intent(inout) :: hammerforce
+                real*8 intent(inout) :: lasthammervelocity
+                real*8 intent(inout) :: compression
+                real*8 intent(in) :: deltat
+                real*8 dimension(:),intent(in) :: g
+                real*8 dimension(:),intent(inout) :: force
+                logical intent(out) :: hammerdone
+                real*8 intent(in) :: tension
+                real*8 intent(in) :: bendingprefactor
+                real*8 intent(in) :: k
+                real*8 intent(in) :: b
+                real*8 intent(in) :: rho
+                real*8 intent(in) :: deltax
+            end subroutine rigid_hammer_strike
+        end module hammerstrike
+        module timeevolution ! in :timeevolution:timeevolution.f90
+            subroutine time_evolution(y,inity,g,n,ntimesteps,ms,bl1,bl2,bl3,bl4,blf,a1,a2,a3,a4,a5,br1,br2,br3,br4,brf,deltat) ! in :timeevolution:timeevolution.f90:timeevolution
+                real*8 dimension(n + 1,ntimesteps + 1),intent(out),depend(n,ntimesteps) :: y
+                real*8 dimension(:),intent(in) :: inity
+                real*8 dimension(:),intent(in) :: g
+                integer intent(in) :: n
+                integer intent(in) :: ntimesteps
+                real*8 intent(in) :: ms
+                real*8 intent(in) :: bl1
+                real*8 intent(in) :: bl2
+                real*8 intent(in) :: bl3
+                real*8 intent(in) :: bl4
+                real*8 intent(in) :: blf
+                real*8 intent(in) :: a1
+                real*8 intent(in) :: a2
+                real*8 intent(in) :: a3
+                real*8 intent(in) :: a4
+                real*8 intent(in) :: a5
+                real*8 intent(in) :: br1
+                real*8 intent(in) :: br2
+                real*8 intent(in) :: br3
+                real*8 intent(in) :: br4
+                real*8 intent(in) :: brf
+                real*8 intent(in) :: deltat
+            end subroutine time_evolution
+            subroutine time_evolution_bridge(bridgey,inity,g,n,ntimesteps,ms,bridgeposition,deltat,inputf,fduration,b1,b2,deltax,r,mu,zetab,zetal,rho,b1damped,b2damped,dampt,initialhammerheight,initialhammervelocity,k,b,hammermass) ! in :timeevolution:timeevolution.f90:timeevolution
+                real*8 dimension(3,ntimesteps + 1),intent(out),depend(ntimesteps) :: bridgey
+                real*8 dimension(:),intent(in) :: inity
+                real*8 dimension(:),intent(in) :: g
+                integer intent(in) :: n
+                integer intent(in) :: ntimesteps
+                real*8 intent(in) :: ms
+                real*8 intent(in) :: bridgeposition
+                real*8 intent(in) :: deltat
+                real*8 intent(in) :: inputf
+                real*8 intent(in) :: fduration
+                real*8 intent(in) :: b1
+                real*8 intent(in) :: b2
+                real*8 intent(in) :: deltax
+                real*8 intent(in) :: r
+                real*8 intent(in) :: mu
+                real*8 intent(in) :: zetab
+                real*8 intent(in) :: zetal
+                real*8 intent(in) :: rho
+                real*8 intent(in) :: b1damped
+                real*8 intent(in) :: b2damped
+                real*8 intent(in) :: dampt
+                real*8 intent(in) :: initialhammerheight
+                real*8 intent(in) :: initialhammervelocity
+                real*8 intent(in) :: k
+                real*8 intent(in) :: b
+                real*8 intent(in) :: hammermass
+            end subroutine time_evolution_bridge
+        end module timeevolution
+    end interface 
+end python module timeevolution
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
