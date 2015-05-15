@@ -71,9 +71,9 @@ class String:
     
     beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
     endwindow = int(np.floor(hammer_center_position+hammer_length/2))
-    g = np.zeros((self.N),dtype = float)
+    self.g = np.zeros((self.N),dtype = float)
     for i in range(beginwindow,endwindow+1):
-        g[i] = (0.005/(0.03*0.03))*i*i*(float(endwindow)-float(beginwindow))*self.delta_x
+        self.g[i] = (0.005/(0.03*0.03))*i*i*(float(endwindow)-float(beginwindow))*self.delta_x
     
     # Sound bridge
     bridgeposition = 0.8   # value between 0 and 1
