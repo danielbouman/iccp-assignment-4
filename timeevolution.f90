@@ -313,7 +313,7 @@ end subroutine
     ! Now calculate new forces:
     oldforce = force
     forall(j=1:size(y,1),contact(j).eqv..TRUE.)
-       force(j) = -(y(j-2)+4*y(j-1)+7*y(j)+4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
+       force(j) = -(y(j-2)-4*y(j-1)-2*y(j)-4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
        force(j) = -force(j)*bendingPrefactor
        force(j) = force(j) - tension*(y(j-1)-2*y(j)+y(j+1))
        netforce = netforce - force(j)
@@ -335,7 +335,7 @@ end subroutine
     hammerHeight = hammerHeight + oldcompression - compression
     hammerForce = netforce - k*comppowbp1/compression
 
-    print *, hammerHeight, hammerVelocity, hammerForce, compression
+!    print *, hammerHeight, hammerVelocity, hammerForce, compression
   end subroutine rigid_hammer_strike
 
 
