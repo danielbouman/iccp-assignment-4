@@ -228,7 +228,7 @@ do t=3,(nTimeSteps+1)
     do i=3,(N-1)
       y(i,localt) = a1*(y(i+2,localt-1)+y(i-2,localt-1)) + a2*(y(i+1,localt-1) + y(i-1,localt-1)) &
  + a3*y(i,localt-1) + a4*y(i,localt-2) + a5*(y(i+1,localt-2)+y(i-1,localt-2)) &
- + deltaT*deltaT*N*stringForce*/Ms
+ + deltaT*deltaT*N*stringForce/Ms
     end do
 
     if (hammerDone.eqv..FALSE.) then
