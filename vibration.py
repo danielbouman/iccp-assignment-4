@@ -66,13 +66,14 @@ class String:
     self.hammerK = 4.5e9
     self.hammerP = 2.5
     self.hammerM = 2.97e-3
-    hammer_length = round(0.1/self.delta_x)
+    hammer_length = round(0.3/self.delta_x)
     hammer_center_position = round(1/7*self.N)
     
     beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
     endwindow = int(np.floor(hammer_center_position+hammer_length/2))
     g = np.zeros((self.N),dtype = float)
-    g[beginwindow:endwindow-1] = 1.0/(endwindow-beginwindow)
+    for i in range(beginwindow,endwindow+1):
+        g[i] = (0.005/(0.03*0.03))*i*i*(float(endwindow)-float(beginwindow))*self.delta_x
     
     # Sound bridge
     bridgeposition = 0.8   # value between 0 and 1
