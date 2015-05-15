@@ -59,14 +59,14 @@ class String:
     
     # Hammer
     F = 15.
-    durationF = 90
+    durationF = 352
     
     initialhammerheight = 0.005
-    initialhammervelocity = 3
+    initialhammervelocity = 0.8
     self.hammerK = 4.5e9
     self.hammerP = 2.5
     self.hammerM = 2.97e-3
-    hammer_length = round(0.03/self.delta_x)
+    hammer_length = round(0.1/self.delta_x)
     hammer_center_position = round(1/7*self.N)
     
     beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
