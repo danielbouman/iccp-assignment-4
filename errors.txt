@@ -1,23 +1,50 @@
-hammerstrike.f90:32.7:
+timeevolution.f90:401.7:
 
        nContactElements = nContactElements+1
        1
 Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
-hammerstrike.f90:45.7:
+timeevolution.f90:414.7:
 
        netforce = netforce - force(j)
        1
 Warning: The FORALL with index 'j' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
-hammerstrike.f90:46.7:
+timeevolution.f90:415.7:
 
        hammerVelocity = hammerVelocity + (oldforce(j)+force(j))/(hammerMass*2)
        1
 Warning: The FORALL with index 'j' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
-hammerstrike.f90:49.7:
+timeevolution.f90:418.7:
 
        pstring = pstring + rho * deltaX * hammerVelocity
        1
 Warning: The FORALL with index 'j' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
-/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../lib64/crt1.o: In function `_start':
-(.text+0x20): undefined reference to `main'
-collect2: error: ld returned 1 exit status
+timeevolution.f90:309.7:
+
+       nContactElements = nContactElements - 1
+       1
+Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
+timeevolution.f90:323.7:
+
+       stringforce(i) = -(y(j-2)-4*y(j-1)-2*y(j)-4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
+       1
+Warning: The FORALL with index 'j' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
+timeevolution.f90:338.7:
+
+       nContactElements = nContactElements - 1
+       1
+Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
+timeevolution.f90:347.7:
+
+       stringforce(j) = -(y(j-2)-4*y(j-1)-2*y(j)-4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
+       1
+Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
+timeevolution.f90:348.7:
+
+       stringforce(j) = -stringforce(j)*bendingPrefactor
+       1
+Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
+timeevolution.f90:349.7:
+
+       stringforce(j) = stringforce(j) - tension*(y(j-1)-2*y(j)+y(j+1))
+       1
+Warning: The FORALL with index 'i' is not used on the left side of the assignment at (1) and so might cause multiple assignment to this object
