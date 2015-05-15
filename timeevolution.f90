@@ -124,6 +124,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   hammerHeight = initialHammerHeight
   hammerVelocity = initialHammerVelocity
   hammerForce = 0
+  hammerDone = .FALSE.
 
   !!! Constants
 
