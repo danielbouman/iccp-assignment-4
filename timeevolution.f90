@@ -108,14 +108,15 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   real*8              :: a1,a2,a3,a4,a5
   real*8              :: bR1,bR2,bR3,bR4,bRF
 
-  real*8              :: hammerHeight, hammerVelocity, hammerForce, lastHammerVelocity, compression, &
+  real*8              :: hammerHeight(size(initY,1)), hammerVelocity(size(initY,1)), hammerForce(size(initY,1)), &
+       lastHammerVelocity, compression, &
                               stringForce(size(initY,1)), bendingPrefactor, tension
   integer, intent(in) :: N, nTimeSteps
   logical             :: hammerDone
 
   real*8, intent(out) :: bridgeY(3,nTimeSteps+1)
 
-  real*8              :: F, y(N+1,3)
+  real*8              :: F, y(N+1,3), vy(N+1)
   integer             :: i, t, localt, bridgeElement
 
   real*8              :: D, nu, b_R_denom, b_L_denom
@@ -124,6 +125,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
   hammerHeight = initialHammerHeight
   hammerVelocity = initialHammerVelocity
   hammerForce = 0
+  stringForce = 0
   hammerDone = .FALSE.
 
   !!! Constants
@@ -162,6 +164,7 @@ subroutine time_evolution_bridge(bridgeY,initY,g,N,nTimeSteps,Ms,bridgePosition,
 !!!!!!!!!!!!!!!!! localt having a constant value of 3 (which
 !!!!!!!!!!!!!!!!! helps continuity as well.)
   F = 0
+  vy = 0
 
     y(1,localt) = bL1*initY(1)+bL2*initY(2)+bL3*initY(3)+bL4*initY(1)+bLF*0
     y(2,localt) = a1*(initY(4)-initY(2)+2*initY(1)) + a2*(initY(3)+initY(1)) &
@@ -232,9 +235,9 @@ do t=3,(nTimeSteps+1)
     end do
 
     if (hammerDone.eqv..FALSE.) then
-      call rigid_hammer_strike(y(:,localt),hammerHeight,hammerMass,hammerVelocity,hammerForce, &
-         lastHammerVelocity,compression,deltaT,g,stringForce,hammerDone,tension,bendingPrefactor, &
-         k,b,rho,deltaX)
+      call rigid_hammer(y(:,localt),hammerHeight,hammerMass,hammerVelocity,hammerForce, &
+         deltaT,hammerDone,tension,bendingPrefactor, &
+         k,b,rho,deltaX,vy,stringForce)
     end if
     
 
@@ -280,6 +283,97 @@ end subroutine
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine rigid_hammer(y,hammerHeight,hammerMass,hammerVelocity,hammerForce,deltaT, &
+       hammerDone,tension,bendingPrefactor,k,b,rho,deltaX,vy,stringForce)
+
+    real*8, intent(inout) :: y(:), vy(:), hammerHeight(:), hammerVelocity(:)
+    real*8, intent(inout) :: hammerForce(:),stringForce(:)
+    real*8, intent(in)    :: hammerMass, bendingPrefactor, rho, deltaT, deltaX, tension, k, b
+    real*8                :: lastCompression(size(hammerHeight,1)), compression(size(hammerHeight,1)), &
+         oldStringForce(size(y,1))
+    logical, intent(out)  :: hammerDone
+    logical               :: contact(size(y,1))
+    integer               :: i, j, nContactElements
+
+    nContactElements = size(y,1)
+    hammerDone = .FALSE.
+    contact = .TRUE.
+    
+    lastCompression = hammerHeight - y
+    stringforce = 0
+    
+    forall (i=1:size(y,1),lastCompression(i).le.0)
+       contact(i) = .FALSE.
+       lastCompression(i) = 0
+       nContactElements = nContactElements - 1
+    end forall
+    if (nContactElements.le.1) then
+       hammerDone = .TRUE.
+       return
+    end if
+    lastCompression = lastCompression**b
+    
+    
+    hammerHeight = hammerHeight + hammerVelocity*deltaT - k*nContactElements*lastCompression*deltaT**2/(2*hammerMass)
+
+
+    
+    forall (j=1:size(y,1),contact(i).eqv..TRUE.)
+       stringforce(i) = -(y(j-2)-4*y(j-1)-2*y(j)-4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
+       stringforce(j) = -stringforce(j)*bendingPrefactor
+       stringforce(j) = stringforce(j) - tension*(y(j-1)-2*y(j)+y(j+1))
+    end forall
+    
+    y = 2*y - vy*deltaT + (k*lastCompression + stringforce)/(2*rho*deltaX)
+
+!CALCULATEFORCES
+
+    oldstringforce = stringforce
+    compression = hammerHeight - y
+
+    forall (i=1:size(y,1),compression(i).le.0)
+       contact(i) = .FALSE.
+       compression(i) = 0
+       nContactElements = nContactElements - 1
+    end forall
+    if (nContactElements.le.1) then
+       hammerDone = .TRUE.
+       return
+    end if
+    compression = compression**b
+
+    forall (i=1:size(y,1),contact(i).eqv..TRUE.)
+       stringforce(j) = -(y(j-2)-4*y(j-1)-2*y(j)-4*y(j+1)+y(j+2))*(1+(y(j-1)-y(j+1))**2)
+       stringforce(j) = -stringforce(j)*bendingPrefactor
+       stringforce(j) = stringforce(j) - tension*(y(j-1)-2*y(j)+y(j+1))
+    end forall
+    
+    hammerVelocity = hammerVelocity + k*nContactElements*deltaT*(lastcompression+compression)/(2*hammerMass)
+    vy = vy + (k*(lastcompression+compression) + oldstringforce)*deltaT/(2*rho*deltaX)
+    stringforce = -stringforce
+  end subroutine rigid_hammer
+  
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   subroutine rigid_hammer_strike(y,hammerHeight,hammerMass,hammerVelocity,hammerForce,lastHammerVelocity,compression,deltaT, &
