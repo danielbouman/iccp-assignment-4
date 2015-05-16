@@ -71,9 +71,9 @@ class String:
     
     beginwindow = int(np.floor((hammer_center_position-hammer_length/2)))
     endwindow = int(np.floor(hammer_center_position+hammer_length/2))
-    g = np.zeros((self.N),dtype = float)
+    self.g = np.zeros((self.N),dtype = float)
     for i in range(beginwindow,endwindow+1):
-        g[i] = (0.005/(0.03*0.03))*i*i*(float(endwindow)-float(beginwindow))*self.delta_x
+        self.g[i] = (0.005/(0.03*0.03))*(float(endwindow)-float(beginwindow)-float(i))**2*self.delta_x
     
     # Sound bridge
     bridgeposition = 0.8   # value between 0 and 1
@@ -84,7 +84,7 @@ class String:
     dampIndex = dampT/self.delta_t
     
     # Actual time evolution of the string
-    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex,initialhammerheight,initialhammervelocity,self.hammerK,self.hammerP,self.hammerM)
+    self.time_evolved_string = te.timeevolution.time_evolution_bridge(self.y,self.g,self.N,self.duration,self.Ms,bridgeposition,self.delta_t,F,durationF,self.b_1,self.b_2,self.delta_x,self.r,self.mu,zeta_b,zeta_l,self.rho,b_1Damped,b_2Damped,dampIndex,initialhammerheight,initialhammervelocity,self.hammerK,self.hammerP,self.hammerM)
 
   """ Export note to a wave data for creating a chord. """
   def getWave(self):
